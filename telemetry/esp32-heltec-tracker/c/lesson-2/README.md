@@ -1,15 +1,15 @@
 # Lesson 2: Running a Program on the ESP32 Microcontroller
 
-### Prerequisites:
-- To complete this lesson, you need to be able to connect your micorcontroller to your computer and upload a program to it using the IDE. If you are not able to do that, please complete [Lesson 1](../lesson-1/README.md) before continuing.
+### Prerequisites
+- To complete this lesson, you need to be able to connect your microcontroller to your computer and upload a program to it using the IDE. If you are not able to do that, please complete [Lesson 1](../lesson-1/README.md) before continuing.
 
-### Objectives:
+### Objectives
 Students will: 
 - Learn the purpose of the initialiation, setup and loop sections of a microcontroller program  
 - Write a basic program to make the onboard LED blink 
 - Write a more complex program that causes an LED array to act like a stop light
 
-### Materials:
+### Materials
 - [Heltec Wireless Tracker](https://heltec.org/project/wireless-tracker/)\
   ![Image of Heltec Wireless Tracker](assets/images/heltec_wireless_tracker.png)
 - [Breadboard](https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard/all)\
@@ -136,4 +136,4 @@ As you might have guessed, the microcontroller's pins can be used as inputs as w
     - after these steps, the light should return to green until the user presses the button again.
 
 
-*Still stuck? With your mentor, take a look at the [solution code linked on Github](../lesson-2/Lesson_2_solution.ino).
+*Still stuck? With your mentor, take a look at the [solution code linked on Github](../lesson-2/Lesson_2_solution.ino).*

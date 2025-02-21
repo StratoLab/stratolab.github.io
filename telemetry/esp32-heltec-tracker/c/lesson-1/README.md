@@ -1,12 +1,12 @@
 # Lesson 1: Introduction and how to get started building the StratoLab
 
-### Objectives:
+### Objectives
 Students will: 
 - learn the components used for this project
 - gain a basic understanding of electronics to complete the project
 - ensure they can connect to the microcontroller and upload code
 
-### Materials:
+### Materials
 - [Heltec Wireless Tracker](https://heltec.org/project/wireless-tracker/)\
   ![Image of Heltec Wireless Tracker](assets/images/heltec_wireless_tracker.png)
 - [Breadboard](https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard/all)\
