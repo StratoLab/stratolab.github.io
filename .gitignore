@@ -1,0 +1,9 @@
+# Bypass .gitignore_global
+!*
+
+# Ignore drawIO temp files
+*.bkp
+*.dtmp
+
+# Ignore other files
+.DS_Store
