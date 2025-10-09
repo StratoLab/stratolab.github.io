@@ -31,17 +31,14 @@ In addition to the reading below, you can watch this [video](assets/videos/Lesso
 
 HW-125 Pins | Description | Pi Pico Pins
 ----------- | ----------- | ------------
-GND         | (Voltage Common Collector): Provides power to the HW-125. Connect to the 5V pin on Pico | GND (38)
-VCC         | (Ground): Connect to the ground pin on Pico | 5V (40)
+VCC         | (Voltage Common Collector): Provides power to the HW-125.  | VBUS 5v (40)
+GND         | Ground | GND (38)
 SCK         | (Serial Clock): Accepts clock pulses from the Pico to synchronize data transmission | GP10 (14)
 MOSI        | (Master Out Slave In): SPI input to microSD card module | GP11 (15)
 MISO        | (Master In Slave Out): SPI output from the microSD card module | GP12 (16)
-CS          | (Chip Select): Control pin used to select one (or set) of devices on the SPI bus | GP13 (17) 
+CS          | (Chip Select): Control pin used to select one (or set) of devices on the SPI bus | GP13 (17)
 
 ![sd-card-diagram](assets/images/pi-pico-hw150.png)
-
-Finished wire up:
-![sd-card-diagram](assets/images/WireUp.jpg)
 
 ### Format the micro SD card
 

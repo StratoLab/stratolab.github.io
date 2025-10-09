@@ -22,10 +22,10 @@
 
 SSD1306 Pins | Description | Pi Pico Pins
 ------------ | ----------- | ------------
-GND          | (Voltage Common Collector): Provides power to the module. Connect to the 5V pin on Pico | GND (38)
-VCC          | (Ground): Connect to the ground pin on Pico | 5V (40)
-SCL          | (Serial Clock): Accepts clock pulses from the Pico to synchronize data transmission | GP10 (17)
-SDA          | (Serial Data): Used for data exchange | GP16 (16)
+GND          | (Ground): Connect to the ground pin on Pico | GND (38)
+VCC          | (Voltage Common Collector): Provides power to the module. Connect to the 3.3V pin on Pico | 3V3 (36)
+SCL          | (Serial Clock): Accepts clock pulses from the Pico to synchronize data transmission | GP17 (22)
+SDA          | (Serial Data): Used for data exchange | GP16 (21)
 
 ![ssd1306-diagram](assets/images/ssd1306-diagram.png)
 
