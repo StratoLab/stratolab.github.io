@@ -14,11 +14,12 @@ This project contains lessons wherein learners will launch their own weather bal
 
 The project contains basic hands-on experiences with the following:
 
-Microcontrollers & electronics, including wiring peripheral modules between a microcontroller and breadboard
-Programming microcontrollers to interact with peripheral modules using C programming language (Arduino microcontroller) or Python (Raspberry Pi Pico microcontroller)
-Launching a finished product in a high-altitude balloon flight to the stratosphere (90,000+ feet)
-Analyzing collected data after recovering the balloon payload
-Each lesson is constructed to be completed within the timeframe of a typical classroom experience (approximately 45 minutes to 1 hour), and are designed to be completed by small groups (between 2 and 5 learners is recommended)
+- Microcontrollers & electronics, including wiring peripheral modules between a microcontroller and breadboard
+- Programming microcontrollers to interact with peripheral modules using C programming language (Arduino microcontroller) or Python (Raspberry Pi Pico microcontroller)
+- Launching a finished product in a high-altitude balloon flight to the stratosphere (90,000+ feet)
+- Analyzing collected data after recovering the balloon payload
+
+Each lesson is constructed to be completed within the timeframe of a typical classroom experience (approximately 45 minutes to 1 hour), and are designed to be completed by small groups (between 2 and 5 learners is recommended).
 
 Let's get started!
 
@@ -36,17 +37,17 @@ The [Materials](materials.md) guide will help mentors and students estimate and 
 * Prediction: [Tools and techniques for predicting balloon flight behavior](balloon/prediction.md)
 * Checklist: [Useful checklist for launch day prep and balloon launch](balloon/checklist.md)
 
-# Radio
+<!-- # Radio
 
-TODO
+TODO -->
 
-# Tracker
+<!-- # Tracker
 
-TODO
+TODO -->
 
 # Telemetry
 
-Telemetry is a series of lessons with instructions for wiring hardware modules to a microcontroller, then programming the microcontroller to interface with the modules. Throughout these lessons, individuals will learn the basiscs of microcontrollers, wiring, programming, and debugging.
+Telemetry is a series of lessons with instructions for wiring hardware modules to a microcontroller, then programming the microcontroller to interface with the modules. Throughout these lessons, individuals will learn the basics of microcontrollers, wiring, programming, and debugging.
 
 ## Hardware
 
@@ -79,17 +80,17 @@ Telemetry is a series of lessons with instructions for wiring hardware modules t
   * [Lesson 6](/telemetry/esp32-heltec-tracker/c/lesson-6/README.md)
   * [Lesson 7](/telemetry/esp32-heltec-tracker/c/lesson-7/README.md)
 
-# Data
+<!-- # Data
 
-TODO
+TODO -->
 
 # Resources
 Things to check out to learn more!
 
 ## Amateur Radio
-You may be asking why is this here? Well, the primary tracking system on the balloon uses a form of radio called APRS. Without it you would never be able to find your balloon. There is some really cool nerdy stuff that has many scholorship opportunties within the radio world (hint hint).
+You may be asking why is this here? Well, the primary tracking system on the balloon uses a form of radio called APRS. Without it you would never be able to find your balloon. There is some really cool nerdy stuff that has many scholarship opportunities within the radio world (hint hint).
 - [ARRL](https://www.arl.org/)
-- [APRS](http://aprs.org/) which you need a amateur licensce to operate.
+- [APRS](http://aprs.org/) which you need an amateur license to operate.
 - [LightAPRS-W (+WSPR) Tracker](http://qrp-labs.com/lightaprs-w.html)
 - [Technician study webinar](https://youtu.be/0wwnOPaF1qI)
 
