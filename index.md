@@ -6,7 +6,9 @@
     src="assets/images/stratolab.png" 
     alt="StratoLab logo">
 
-Welcome to StratoLab! StratoLab is a project built to be usable by schools, community groups, youth organizations, and more as an introduction to programming, electronics and team building.
+Welcome to StratoLab! 
+
+StratoLab is a project built to be usable by schools, community groups, youth organizations, and more as an introduction to programming, electronics and team building.
 
 The [National Weather Service](https://www.weather.gov/chs/upperair) launches a minimum of two high altitude balloons a day from [91 locations](https://www.weather.gov/upperair/nws_upper) at `1100` and `2300` UTC to observe weather conditions used to model weather forecasts. When flying high altitude balloons, data is usually collected throughout the flight and later retrieved for analysis.
 
@@ -44,6 +46,12 @@ TODO -->
 <!-- # Tracker
 
 TODO -->
+
+# Initial Research
+
+Before delving into the individual lessons related to hardware and software, it's important to gain an understanding of the scope and set of problems needing to be solved before launching a high altitude balloon.
+
+The [Initial Research Plan](/initial-research.md) contains a methodical approach to breaking down the different problem domains. Each domain can be assigned to groups of students to perform initial research and planning.
 
 # Telemetry
 
