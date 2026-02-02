@@ -150,7 +150,7 @@ docs(lesson-1): changed everything about GPS module setup including wiring, code
    - Screenshots for visual changes
    - Safety considerations (if applicable)
 
-3. **Use the PR template** (if available)
+3. **Use the PR template** ([`.github/PULL_REQUEST_TEMPLATE.md`](../.github/PULL_REQUEST_TEMPLATE.md))
    - Complete all checklist items
    - Mark N/A for non-applicable items
    - Don't skip safety review questions
