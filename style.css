@@ -561,6 +561,129 @@ body {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* ===== Pinout FAB (Floating Action Button) ===== */
+#pinout-fab {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-bg);
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s;
+  z-index: 150;
+}
+
+#pinout-fab:hover {
+  border-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#pinout-fab.hidden {
+  display: none;
+}
+
+.fab-image {
+  width: 80px;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+
+.fab-label {
+  color: var(--color-primary);
+  font-weight: 600;
+  padding-right: var(--spacing-xs);
+}
+
+/* ===== Pinout Modal ===== */
+#pinout-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pinout-modal.hidden {
+  display: none;
+}
+
+#pinout-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+#pinout-modal-content {
+  position: relative;
+  background-color: var(--color-bg);
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+#pinout-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+#pinout-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#pinout-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+
+#pinout-modal-close:hover {
+  color: var(--color-text);
+}
+
+#pinout-modal-body {
+  padding: var(--spacing-lg);
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pinout-modal-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
 /* ===== Responsive (< 768px) ===== */
 @media (max-width: 767px) {
   #hamburger {
@@ -591,13 +714,41 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 40;
   }
+
+  /* Pinout FAB - mobile adjustments */
+  #pinout-fab {
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .fab-image {
+    display: none;
+  }
+
+  .fab-label {
+    padding-right: 0;
+  }
+
+  /* Pinout Modal - mobile adjustments */
+  #pinout-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    margin: var(--spacing-sm);
+  }
+
+  #pinout-modal-body {
+    padding: var(--spacing-md);
+  }
 }
 
 /* ===== Print ===== */
 @media print {
   #header,
   #sidebar,
-  #toast {
+  #toast,
+  #pinout-fab,
+  #pinout-modal {
     display: none !important;
   }
 

@@ -46,6 +46,27 @@
     <button id="toast-dismiss" aria-label="Dismiss">×</button>
   </div>
 
+  <!-- Pinout FAB (Floating Action Button) -->
+  <button id="pinout-fab" class="hidden" aria-label="Show Pico pinout diagram">
+    <img src="assets/images/pinouts/raspberry-pi-pico-pinout-thumb.png" alt="Pinout" class="fab-image">
+    <span class="fab-label">Pinout</span>
+  </button>
+
+  <!-- Pinout Modal -->
+  <div id="pinout-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="pinout-modal-title">
+    <div id="pinout-modal-backdrop"></div>
+    <div id="pinout-modal-content">
+      <div id="pinout-modal-header">
+        <h2 id="pinout-modal-title">Raspberry Pi Pico Pinout</h2>
+        <button id="pinout-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div id="pinout-modal-body">
+        <img src="assets/images/pinouts/raspberry-pi-pico-pinout.png" 
+             alt="Raspberry Pi Pico pinout diagram showing all GPIO pins, power pins, and their functions">
+      </div>
+    </div>
+  </div>
+
   <script>
     // ===== State =====
     let config = null;
@@ -287,6 +308,7 @@
         activeId = id;
         window.location.hash = id;
         updateSidebarActiveState();
+        updatePinoutFabVisibility();
         saveLastVisited(id);
         
         // Scroll to top
@@ -336,6 +358,7 @@
       activeId = null;
       window.location.hash = '';
       updateSidebarActiveState();
+      updatePinoutFabVisibility();
       
       document.getElementById('content').innerHTML = `
         <div class="landing">
@@ -464,12 +487,27 @@
         dismissToast();
         localStorage.removeItem('stratolab-last-visited');
       });
+
+      // Pinout FAB and Modal
+      document.getElementById('pinout-fab').addEventListener('click', openPinoutModal);
+      
+      document.getElementById('pinout-modal-close').addEventListener('click', closePinoutModal);
+      
+      document.getElementById('pinout-modal-backdrop').addEventListener('click', closePinoutModal);
+      
+      // Escape key to close modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('pinout-modal').classList.contains('hidden')) {
+          closePinoutModal();
+        }
+      });
     }
 
     // ===== Track Picker =====
     function setActiveTrack(track) {
       activeTrack = track;
       renderSidebar();
+      updatePinoutFabVisibility();
     }
 
     // ===== localStorage: Last Visited =====
@@ -526,6 +564,26 @@
 
     function dismissToast() {
       document.getElementById('toast').classList.add('hidden');
+    }
+
+    // ===== Pinout Modal =====
+    function updatePinoutFabVisibility() {
+      const fab = document.getElementById('pinout-fab');
+      const shouldShow = activeTrack === 'pico' || 
+                         (activeId && activeId.startsWith('pico-'));
+      fab.classList.toggle('hidden', !shouldShow);
+    }
+
+    function openPinoutModal() {
+      document.getElementById('pinout-modal').classList.remove('hidden');
+      document.body.classList.add('modal-open');
+      document.getElementById('pinout-modal-close').focus();
+    }
+
+    function closePinoutModal() {
+      document.getElementById('pinout-modal').classList.add('hidden');
+      document.body.classList.remove('modal-open');
+      document.getElementById('pinout-fab').focus();
     }
 
     // Make showLanding available globally for inline onclick handlers
