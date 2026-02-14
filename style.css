@@ -68,7 +68,8 @@ body {
   width: var(--sidebar-width);
   background-color: var(--color-sidebar-bg);
   border-right: 1px solid var(--color-border);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   padding: var(--spacing-md);
   z-index: 50;
 }
@@ -146,6 +147,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 calc(-1 * var(--spacing-md));
+  padding: 0 var(--spacing-md);
 }
 
 .nav-section {
