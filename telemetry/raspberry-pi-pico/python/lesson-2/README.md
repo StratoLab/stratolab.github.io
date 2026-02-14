@@ -30,7 +30,7 @@ This is the bottom of the Pico. Notice that all of the pins are labeled. However
 
 This makes a pinout diagram incredibly helpful. It's recommended to have this pinout diagram on-hand, either printed out or easily available in your computer. The pinout diagram shows bothy logical (for example, GP11) and physical (for example, 15) pin layouts.
 
-![Raspberry Pi Pico Pinout](assets/images/raspberry-pi-pico-pinout.png)
+![Raspberry Pi Pico Pinout](../../../../../../assets/images/pinouts/raspberry-pi-pico-pinout.png)
 
 ## Blink the Onboard LED
 

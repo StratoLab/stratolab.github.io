@@ -3,7 +3,7 @@
            margin-left: auto;
            margin-right: auto;
            width: 30%;"
-    src="assets/images/stratolab.png" 
+    src="assets/images/stratolab.svg" 
     alt="StratoLab logo">
 
 Welcome to StratoLab! 
