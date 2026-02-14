@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StratoLab - Educational STEM project for launching high-altitude balloons to the stratosphere">
+  <title>StratoLab - High Altitude Balloon STEM Project</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <button id="hamburger" aria-label="Toggle navigation">☰</button>
+    <a href="#" id="logo-link" aria-label="Return to home">
+      <img src="assets/images/stratolab.png" alt="StratoLab logo" id="logo">
+    </a>
+    <div id="search-placeholder">
+      <!-- Phase 2: Search box goes here -->
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <nav id="track-picker" aria-label="Track selection">
+      <button data-track="all" class="active">All</button>
+      <button data-track="pico">Pico</button>
+      <button data-track="arduino">Arduino</button>
+      <button data-track="esp32">ESP32</button>
+    </nav>
+    <nav id="nav-tree" aria-label="Site navigation">
+      <!-- Populated by JavaScript -->
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="content">
+    <!-- Landing state or rendered lesson -->
+  </main>
+
+  <!-- Toast for "continue where you left off" -->
+  <div id="toast" class="hidden" role="alert">
+    <span id="toast-message"></span>
+    <button id="toast-continue">Continue</button>
+    <button id="toast-dismiss" aria-label="Dismiss">×</button>
+  </div>
+
+  <script>
+    // ===== State =====
+    let config = null;
+    let activeTrack = 'all';
+    let activeId = null;
+    let allItems = []; // Flat list of all navigable items for lookup
+
+    // ===== Initialization =====
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      try {
+        // 1. Fetch config
+        const response = await fetch('site-config.json');
+        if (!response.ok) {
+          throw new Error('Failed to load site configuration');
+        }
+        config = await response.json();
+        
+        // 2. Build flat item lookup
+        buildItemLookup();
+        
+        // 3. Render sidebar
+        renderSidebar();
+        
+        // 4. Setup event listeners
+        setupEventListeners();
+        
+        // 5. Handle initial state
+        if (window.location.hash) {
+          const id = window.location.hash.slice(1);
+          const item = findItemById(id);
+          if (item) {
+            loadContent(item.path, item.id, item.stub);
+          } else {
+            console.warn(`No item found for hash: ${id}`);
+            showLanding();
+          }
+        } else {
+          showLanding();
+          checkLastVisited(); // Show toast if applicable
+        }
+      } catch (error) {
+        console.error('Initialization error:', error);
+        showError('Failed to load site. Please refresh the page.');
+      }
+    }
+
+    // ===== Build flat lookup of all items =====
+    function buildItemLookup() {
+      allItems = [];
+      
+      // Add shared items
+      config.shared.forEach(item => {
+        if (item.children) {
+          item.children.forEach(child => {
+            allItems.push(child);
+          });
+        } else {
+          allItems.push(item);
+        }
+      });
+      
+      // Add track items
+      config.tracks.forEach(track => {
+        track.sections.forEach(section => {
+          allItems.push(section);
+        });
+      });
+    }
+
+    // ===== Find item by ID =====
+    function findItemById(id) {
+      return allItems.find(item => item.id === id);
+    }
+
+    // ===== Render Sidebar =====
+    function renderSidebar() {
+      const navTree = document.getElementById('nav-tree');
+      navTree.innerHTML = '';
+      
+      // Render shared sections
+      const sharedSection = document.createElement('div');
+      sharedSection.className = 'nav-section';
+      
+      const sharedHeader = document.createElement('div');
+      sharedHeader.className = 'nav-section-header';
+      sharedHeader.textContent = 'General';
+      sharedSection.appendChild(sharedHeader);
+      
+      config.shared.forEach(item => {
+        if (item.children) {
+          // Render as collapsible group (Balloon)
+          const group = document.createElement('div');
+          group.className = item.collapsed ? 'nav-group collapsed' : 'nav-group expanded';
+          
+          const toggle = document.createElement('button');
+          toggle.className = 'nav-group-toggle';
+          toggle.textContent = item.title;
+          toggle.addEventListener('click', () => {
+            group.classList.toggle('collapsed');
+            group.classList.toggle('expanded');
+          });
+          
+          const children = document.createElement('div');
+          children.className = 'nav-children';
+          
+          item.children.forEach(child => {
+            const childBtn = createNavButton(child);
+            children.appendChild(childBtn);
+          });
+          
+          group.appendChild(toggle);
+          group.appendChild(children);
+          sharedSection.appendChild(group);
+        } else {
+          const btn = createNavButton(item);
+          sharedSection.appendChild(btn);
+        }
+      });
+      
+      navTree.appendChild(sharedSection);
+      
+      // Render track sections
+      if (activeTrack === 'all') {
+        // Show all tracks as collapsible groups (collapsed by default)
+        config.tracks.forEach(track => {
+          const group = document.createElement('div');
+          group.className = track.collapsed ? 'nav-group collapsed' : 'nav-group expanded';
+          
+          const toggle = document.createElement('button');
+          toggle.className = 'nav-group-toggle';
+          toggle.textContent = track.title;
+          toggle.addEventListener('click', () => {
+            group.classList.toggle('collapsed');
+            group.classList.toggle('expanded');
+          });
+          
+          const children = document.createElement('div');
+          children.className = 'nav-children';
+          
+          track.sections.forEach(section => {
+            const btn = createNavButton(section);
+            children.appendChild(btn);
+          });
+          
+          group.appendChild(toggle);
+          group.appendChild(children);
+          navTree.appendChild(group);
+        });
+      } else {
+        // Show only selected track as auto-expanded collapsible group
+        const track = config.tracks.find(t => t.id === activeTrack);
+        if (track) {
+          const group = document.createElement('div');
+          group.className = 'nav-group expanded'; // Auto-expand when filtered
+          
+          const toggle = document.createElement('button');
+          toggle.className = 'nav-group-toggle';
+          toggle.textContent = track.title;
+          toggle.addEventListener('click', () => {
+            group.classList.toggle('collapsed');
+            group.classList.toggle('expanded');
+          });
+          
+          const children = document.createElement('div');
+          children.className = 'nav-children';
+          
+          track.sections.forEach(section => {
+            const btn = createNavButton(section);
+            children.appendChild(btn);
+          });
+          
+          group.appendChild(toggle);
+          group.appendChild(children);
+          navTree.appendChild(group);
+        }
+      }
+      
+      updateSidebarActiveState();
+    }
+
+    // ===== Create nav button =====
+    function createNavButton(item) {
+      const btn = document.createElement('button');
+      btn.className = 'nav-item';
+      btn.textContent = item.title;
+      btn.dataset.id = item.id;
+      
+      if (item.stub) {
+        btn.classList.add('stub');
+      }
+      
+      if (item.id === activeId) {
+        btn.classList.add('active');
+      }
+      
+      btn.addEventListener('click', () => {
+        if (!item.stub) {
+          loadContent(item.path, item.id, false);
+          // Close sidebar on mobile
+          if (window.innerWidth < 768) {
+            document.body.classList.remove('sidebar-open');
+          }
+        } else {
+          showStubMessage(item.title);
+        }
+      });
+      
+      return btn;
+    }
+
+    // ===== Load Content =====
+    async function loadContent(path, id, isStub = false) {
+      if (isStub) {
+        showStubMessage(id);
+        return;
+      }
+      
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`Failed to load: ${path}`);
+        }
+        const markdown = await response.text();
+        
+        let html = marked.parse(markdown);
+        html = rewritePaths(html, path);
+        
+        document.getElementById('content').innerHTML = html;
+        
+        // Update state
+        activeId = id;
+        window.location.hash = id;
+        updateSidebarActiveState();
+        saveLastVisited(id);
+        
+        // Scroll to top
+        window.scrollTo(0, 0);
+        
+      } catch (error) {
+        console.error('Content load error:', error);
+        showError(`Failed to load content: ${error.message}`);
+      }
+    }
+
+    // ===== Rewrite relative paths =====
+    function rewritePaths(html, mdFilePath) {
+      const baseDir = mdFilePath.substring(0, mdFilePath.lastIndexOf('/') + 1);
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      
+      // Rewrite img src
+      container.querySelectorAll('img[src]').forEach(img => {
+        const src = img.getAttribute('src');
+        if (src && !src.startsWith('http') && !src.startsWith('#') && !src.startsWith('/') && !src.startsWith(baseDir)) {
+          img.setAttribute('src', baseDir + src);
+        }
+      });
+      
+      // Rewrite video/source src
+      container.querySelectorAll('video[src], source[src]').forEach(el => {
+        const src = el.getAttribute('src');
+        if (src && !src.startsWith('http') && !src.startsWith('#') && !src.startsWith('/') && !src.startsWith(baseDir)) {
+          el.setAttribute('src', baseDir + src);
+        }
+      });
+      
+      // Rewrite a href (for relative links)
+      container.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('/') && !href.startsWith(baseDir)) {
+          link.setAttribute('href', baseDir + href);
+        }
+      });
+      
+      return container.innerHTML;
+    }
+
+    // ===== Show Landing =====
+    function showLanding() {
+      activeId = null;
+      window.location.hash = '';
+      updateSidebarActiveState();
+      
+      document.getElementById('content').innerHTML = `
+        <div class="landing">
+          <img src="assets/images/stratolab.png" alt="StratoLab logo" class="landing-logo">
+          <h1>Welcome to StratoLab!</h1>
+          <p>StratoLab is a project built to be usable by schools, community groups, youth organizations, and more as an introduction to programming, electronics and team building.</p>
+          <p>The <a href="https://www.weather.gov/chs/upperair" target="_blank" rel="noopener noreferrer">National Weather Service</a> launches a minimum of two high altitude balloons a day from <a href="https://www.weather.gov/upperair/nws_upper" target="_blank" rel="noopener noreferrer">91 locations</a> at 1100 and 2300 UTC to observe weather conditions used to model weather forecasts. When flying high altitude balloons, data is usually collected throughout the flight and later retrieved for analysis.</p>
+          <p>This project contains lessons wherein learners will launch their own weather balloon to the stratosphere, or approximately 90,000+ feet. Throughout the balloon flight, the components within the payload will collect temperature, barometric pressure, latitude, longitude, elevation, and other telemetry data. This information is collected via the peripheral modules attached to the microcontrollers within the payload and stored in an SD card for analysis after recovery.</p>
+          
+          <h2>Hands-on Experiences</h2>
+          <p>The project contains basic hands-on experiences with the following:</p>
+          <ul>
+            <li>Microcontrollers &amp; electronics, including wiring peripheral modules between a microcontroller and breadboard</li>
+            <li>Programming microcontrollers to interact with peripheral modules using C programming language (Arduino microcontroller) or Python (Raspberry Pi Pico microcontroller)</li>
+            <li>Launching a finished product in a high-altitude balloon flight to the stratosphere (90,000+ feet)</li>
+            <li>Analyzing collected data after recovering the balloon payload</li>
+          </ul>
+          <p>Each lesson is constructed to be completed within the timeframe of a typical classroom experience (approximately 45 minutes to 1 hour), and are designed to be completed by small groups (between 2 and 5 learners is recommended).</p>
+          
+          <p class="cta">Select a track from the sidebar to get started!</p>
+        </div>
+      `;
+    }
+
+    // ===== Show Stub Message =====
+    function showStubMessage(title) {
+      document.getElementById('content').innerHTML = `
+        <div class="landing">
+          <h1>${title}</h1>
+          <p style="font-size: 18px; color: var(--color-text-muted);">This lesson is coming soon. Check back later!</p>
+          <p><a href="#" onclick="showLanding(); return false;">Return to home</a></p>
+        </div>
+      `;
+      window.scrollTo(0, 0);
+    }
+
+    // ===== Show Error =====
+    function showError(message) {
+      document.getElementById('content').innerHTML = `
+        <div class="landing">
+          <h1>Error</h1>
+          <p style="color: var(--color-warning-border);">${message}</p>
+          <p><a href="#" onclick="showLanding(); return false;">Return to home</a></p>
+        </div>
+      `;
+    }
+
+    // ===== Update Sidebar Active State =====
+    function updateSidebarActiveState() {
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.dataset.id === activeId) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // ===== Event Listeners =====
+    function setupEventListeners() {
+      // Track picker buttons
+      document.querySelectorAll('#track-picker button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const track = btn.dataset.track;
+          setActiveTrack(track);
+          
+          // Update active state
+          document.querySelectorAll('#track-picker button').forEach(b => {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+        });
+      });
+      
+      // Hamburger toggle (mobile)
+      document.getElementById('hamburger').addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-open');
+      });
+      
+      // Close sidebar when clicking outside on mobile
+      document.body.addEventListener('click', (e) => {
+        if (window.innerWidth < 768 && document.body.classList.contains('sidebar-open')) {
+          if (!e.target.closest('#sidebar') && !e.target.closest('#hamburger')) {
+            document.body.classList.remove('sidebar-open');
+          }
+        }
+      });
+      
+      // Hash change
+      window.addEventListener('hashchange', () => {
+        if (!window.location.hash) {
+          showLanding();
+        } else {
+          const id = window.location.hash.slice(1);
+          const item = findItemById(id);
+          if (item && item.id !== activeId) {
+            loadContent(item.path, item.id, item.stub);
+          }
+        }
+      });
+      
+      // Logo click → showLanding
+      document.getElementById('logo-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showLanding();
+      });
+      
+      // Toast buttons
+      document.getElementById('toast-continue').addEventListener('click', () => {
+        const data = localStorage.getItem('stratolab-last-visited');
+        if (data) {
+          try {
+            const { id } = JSON.parse(data);
+            const item = findItemById(id);
+            if (item) {
+              loadContent(item.path, item.id, item.stub);
+              dismissToast();
+            }
+          } catch (e) {
+            console.error('Error parsing last visited:', e);
+          }
+        }
+      });
+      
+      document.getElementById('toast-dismiss').addEventListener('click', () => {
+        dismissToast();
+        localStorage.removeItem('stratolab-last-visited');
+      });
+    }
+
+    // ===== Track Picker =====
+    function setActiveTrack(track) {
+      activeTrack = track;
+      renderSidebar();
+    }
+
+    // ===== localStorage: Last Visited =====
+    function saveLastVisited(id) {
+      const item = findItemById(id);
+      if (item && !item.stub) {
+        localStorage.setItem('stratolab-last-visited', JSON.stringify({
+          id: id,
+          title: item.title,
+          timestamp: Date.now()
+        }));
+      }
+    }
+
+    function checkLastVisited() {
+      const data = localStorage.getItem('stratolab-last-visited');
+      if (!data) return;
+      
+      try {
+        const { id, title, timestamp } = JSON.parse(data);
+        const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+        
+        if (Date.now() - timestamp > thirtyDays) {
+          localStorage.removeItem('stratolab-last-visited');
+          return;
+        }
+        
+        // Verify the item still exists
+        const item = findItemById(id);
+        if (item && !item.stub) {
+          showToast(id, title);
+        } else {
+          localStorage.removeItem('stratolab-last-visited');
+        }
+      } catch (e) {
+        console.error('Error checking last visited:', e);
+        localStorage.removeItem('stratolab-last-visited');
+      }
+    }
+
+    function showToast(id, title) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = 
+        `Continue where you left off? ${title}`;
+      toast.classList.remove('hidden');
+      
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        if (!toast.classList.contains('hidden')) {
+          dismissToast();
+        }
+      }, 10000);
+    }
+
+    function dismissToast() {
+      document.getElementById('toast').classList.add('hidden');
+    }
+
+    // Make showLanding available globally for inline onclick handlers
+    window.showLanding = showLanding;
+  </script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "shared": [
+    {
+      "id": "materials",
+      "title": "Materials",
+      "path": "materials.md"
+    },
+    {
+      "id": "initial-research",
+      "title": "Initial Research",
+      "path": "initial-research.md"
+    },
+    {
+      "id": "resources",
+      "title": "Resources",
+      "path": "resources.md"
+    },
+    {
+      "id": "balloon",
+      "title": "Balloon",
+      "collapsed": true,
+      "children": [
+        {
+          "id": "balloon-overview",
+          "title": "Overview",
+          "path": "balloon/overview.md"
+        },
+        {
+          "id": "balloon-supplies",
+          "title": "Supplies",
+          "path": "balloon/supplies.md"
+        },
+        {
+          "id": "balloon-assembly",
+          "title": "Assembly",
+          "path": "balloon/assembly.md"
+        },
+        {
+          "id": "balloon-prediction",
+          "title": "Prediction",
+          "path": "balloon/prediction.md"
+        },
+        {
+          "id": "balloon-checklist",
+          "title": "Checklist",
+          "path": "balloon/checklist.md"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "pico",
+      "title": "Raspberry Pi Pico",
+      "collapsed": true,
+      "sections": [
+        {
+          "id": "pico-hardware",
+          "title": "Hardware Overview",
+          "path": "telemetry/raspberry-pi-pico/hardware/README.md"
+        },
+        {
+          "id": "pico-workbench",
+          "title": "Workbench",
+          "path": "telemetry/raspberry-pi-pico/workbench/README.md"
+        },
+        {
+          "id": "pico-lesson-1",
+          "title": "Lesson 1: Introduction",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-1/README.md"
+        },
+        {
+          "id": "pico-lesson-2",
+          "title": "Lesson 2: Blinky Light",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-2/README.md"
+        },
+        {
+          "id": "pico-lesson-3",
+          "title": "Lesson 3: Temperature, Pressure, and Altitude",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-3/README.md"
+        },
+        {
+          "id": "pico-lesson-4",
+          "title": "Lesson 4: GPS Coordinates",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-4/README.md"
+        },
+        {
+          "id": "pico-lesson-5",
+          "title": "Lesson 5: Writing Data to SD Card",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-5/README.md"
+        },
+        {
+          "id": "pico-lesson-6",
+          "title": "Lesson 6: Bringing It All Together",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-6/README.md"
+        },
+        {
+          "id": "pico-lesson-7",
+          "title": "Lesson 7: Using the OLED Module",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-7/README.md"
+        },
+        {
+          "id": "pico-lesson-8",
+          "title": "Lesson 8: Launch",
+          "path": "telemetry/raspberry-pi-pico/python/lesson-8/README.md"
+        }
+      ]
+    },
+    {
+      "id": "arduino",
+      "title": "Arduino",
+      "collapsed": true,
+      "sections": [
+        {
+          "id": "arduino-workbench",
+          "title": "Workbench",
+          "path": "telemetry/arduino/workbench/README.md"
+        },
+        {
+          "id": "arduino-lesson-1",
+          "title": "Lesson 1: Introduction",
+          "path": "telemetry/arduino/c/lesson-1/README.md"
+        },
+        {
+          "id": "arduino-lesson-2",
+          "title": "Lesson 2: Arduino Basics",
+          "path": "telemetry/arduino/c/lesson-2/README.md"
+        },
+        {
+          "id": "arduino-lesson-3",
+          "title": "Lesson 3: Weather Sensor",
+          "path": "telemetry/arduino/c/lesson-3/README.md"
+        },
+        {
+          "id": "arduino-lesson-4",
+          "title": "Lesson 4: GPS Sensor",
+          "path": "telemetry/arduino/c/lesson-4/README.md"
+        },
+        {
+          "id": "arduino-lesson-5",
+          "title": "Lesson 5: Storing the Data",
+          "path": "telemetry/arduino/c/lesson-5/README.md"
+        },
+        {
+          "id": "arduino-lesson-6",
+          "title": "Lesson 6: Putting It All Together",
+          "path": "telemetry/arduino/c/lesson-6/README.md"
+        },
+        {
+          "id": "arduino-lesson-7",
+          "title": "Lesson 7: OLED Display",
+          "path": "telemetry/arduino/c/lesson-7/README.md"
+        }
+      ]
+    },
+    {
+      "id": "esp32",
+      "title": "ESP32 Heltec Tracker",
+      "collapsed": true,
+      "sections": [
+        {
+          "id": "esp32-lesson-1",
+          "title": "Lesson 1: Introduction",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-1/README.md"
+        },
+        {
+          "id": "esp32-lesson-2",
+          "title": "Lesson 2: Running a Program",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-2/README.md"
+        },
+        {
+          "id": "esp32-lesson-3",
+          "title": "Lesson 3: Knowing Where You Are",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-3/README.md"
+        },
+        {
+          "id": "esp32-lesson-4",
+          "title": "Lesson 4: Sensing the Environment",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-4/README.md"
+        },
+        {
+          "id": "esp32-lesson-5",
+          "title": "Lesson 5: How to Record Stuff",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-5/README.md"
+        },
+        {
+          "id": "esp32-lesson-6",
+          "title": "Lesson 6: Coming Soon",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-6/README.md",
+          "stub": true
+        },
+        {
+          "id": "esp32-lesson-7",
+          "title": "Lesson 7: LoRa",
+          "path": "telemetry/esp32-heltec-tracker/c/lesson-7/README.md"
+        }
+      ]
+    }
+  ]
+}
