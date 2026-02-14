@@ -14,6 +14,7 @@
     <button id="hamburger" aria-label="Toggle navigation">☰</button>
     <a href="#" id="logo-link" aria-label="Return to home">
       <img src="assets/images/stratolab.svg" alt="StratoLab logo" id="logo">
+      <span id="logo-text">StratoLab</span>
     </a>
     <div id="search-placeholder">
       <!-- Phase 2: Search box goes here -->
@@ -169,6 +170,12 @@
       navTree.appendChild(sharedSection);
       
       // Render track sections
+      // Add "Tracks" header
+      const tracksHeader = document.createElement('div');
+      tracksHeader.className = 'nav-section-header';
+      tracksHeader.textContent = 'Tracks';
+      navTree.appendChild(tracksHeader);
+      
       if (activeTrack === 'all') {
         // Show all tracks as collapsible groups (collapsed by default)
         config.tracks.forEach(track => {

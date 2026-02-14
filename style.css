@@ -104,6 +104,13 @@ body {
   width: auto;
 }
 
+#logo-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-left: var(--spacing-sm);
+}
+
 #search-placeholder {
   flex: 1;
   /* Phase 2: Search box will go here */
