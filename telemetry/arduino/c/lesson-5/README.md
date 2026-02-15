@@ -62,6 +62,7 @@ The SD card module works with a maximum of 32GB. This means you can either use a
 ![Alt text](assets/images/sdCardFormat.gif)
 <br><br>
 #### Working code to test SD card
+
 ```
 #include <SPI.h>
 #include <SD.h>

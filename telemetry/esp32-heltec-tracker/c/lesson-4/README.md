@@ -31,6 +31,7 @@ Getting the microcontroller to communicate with the BMP108 is easiest if we make
 1. Open the Arduino IDE and start a new program. 
 
 2. Erase any existing text, then add the following initialization code:
+
 ```
     #include <Arduino.h>     // library code for the Arudino IDE 
     #include <Wire.h>        // library code for the I2C protocol
@@ -51,6 +52,7 @@ Getting the microcontroller to communicate with the BMP108 is easiest if we make
 ```
 
 3. Add the following function below the setup function. This code will help us verify that the sensor is wired correctly. Is is called from the ```setup`` function. Can you see where? As a bonus, the function also finds any other devices that are connected using I2C. Look it over and see if you can figure out how it works.
+
 ```
     void scan(){
 	    Serial.println("Scanning all I2C addresses...");

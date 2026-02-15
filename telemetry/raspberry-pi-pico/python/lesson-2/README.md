@@ -64,7 +64,7 @@ All of the holes in the column with a `+` are connected and all of the holes in 
 
 Next you should insert the Pi Pico into the breadboard as in the image below, with the first pins of the Pi in row 1 of the breadboard. Make sure the Pi straddles the center lane so that each pin in connected indepentedly. 
 
-> :warning: **Ensure placement of Pico**  
+> ⚠️ **Ensure placement of Pico**  
 If you were to connect all of the pins on the same side of the board, the Pi would be damaged/destroyed since pins would be connected to each other.  
 
 Be gentle with the Pi so you don't bend/break it as you insert it into the breadboard, but it may be VERY difficult to get it to seat fully. Ask for some help if you need it, but you need to ensure the Pi is fully seated into the breadboard.
@@ -95,7 +95,7 @@ Next, connect a resistor to physical pin `15` (row 15 on the left side of the br
 
 Next, connect the positive (`+`) side of your LED to the resistor via the breadboard by inserting the long leg of the LED into another hole on the same row you just connected the resistor. If following along with our example this would be row `26`. The negative side (`-`) of the LED shall be connected across the middle of the breadboard in the same row.
 
-> :information_source: **Wiring the LED across the center of the board**  
+> ℹ️ **Wiring the LED across the center of the board**  
 Wiring the LED to cross the middle of the breadboard isn't required. However, it's best practice to keep your circuit flowing from the left side to the right side of the breadboard.
 
 Next, you'll need to ground the negative (`-`) leg (the short side) of the LED to the negative (`-`) bar on the breadboard by using another wire. In the image below, this is the white wire.
@@ -110,7 +110,7 @@ The code we used to blink the onboard LED can also be used to blink an external 
 
 Referencing our code from before, edit line `8` and replace the value of 25 with `11`.
 
-> :information_source: **Physical pins versus logical pins and effectively using your pinout diagram**  
+> ℹ️ **Physical pins versus logical pins and effectively using your pinout diagram**  
 You might be asking "but I connected my wire to the physical pin location of `15`, why would I write the value of `11` in my code?" Again, reference your Raspberry Pi Pico pinout diagram. Notice the physical pin has a reference to it called `GP11`. GP, or General Purpose I/O pins, are used by microcontrollers for general input and output operations. Each micorocontroller has unique pinout diagrams with individual pin functionalities. These become incresingly important in later lessons.
 
 The full code can be referenced below.
@@ -132,7 +132,7 @@ while True:
 
 Using the same principles you learned above, wire two more LEDs by connecting them to physical pin `16` (`GP12`) and physical pin `17` (`GP13`). The image below is what the final circuit shall look like. 
 
-> :warning: **Be careful that none of the resistor or LED wires are touching each other**
+> ⚠️ **Be careful that none of the resistor or LED wires are touching each other**
 
 ![RaspberryPiThreeLEDsWired.jpg](assets/images/RaspberryPiThreeLEDsWired.jpg)
 

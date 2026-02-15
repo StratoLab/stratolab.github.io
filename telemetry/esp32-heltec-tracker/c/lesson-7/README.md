@@ -60,6 +60,7 @@ Unlike previous lessons, this lesson will not walk through the code step-by-step
 If you compile this code yourself, you will need to install the RadioLab library by Jan Gromes into the Arduino IDE.
 
 ### Receiver Code
+
 ```
 /*
 * LoRa receiver code
@@ -153,6 +154,7 @@ void readPacket() {
 ```
 
 ### Transmitter Code
+
 ```
 /*
 * LoRa transmitter code

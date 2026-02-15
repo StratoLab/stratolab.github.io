@@ -1,0 +1,27 @@
+# Auto detect text files and normalize line endings to LF on commit
+* text=auto eol=lf
+
+# Explicitly declare text files to ensure consistent handling
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.py text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
+*.ino text eol=lf
+
+# Binary files - don't modify
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.mp4 binary
+*.mov binary
+*.zip binary

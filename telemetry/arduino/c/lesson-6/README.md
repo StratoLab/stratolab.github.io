@@ -103,8 +103,9 @@ Make sure that all the libraries below are installed in the IDE. Without these l
 * TinyGPSPlus
 <br><br>
 
-### Working Code - Copy and paste this into your sketch 
-``` 
+### Working Code - Copy and paste this into your sketch
+
+```
 /*
   SD card datalogger
 

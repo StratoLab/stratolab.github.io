@@ -117,7 +117,7 @@ This project will be using the [Thonny](https://thonny.org/) Integrated Developm
 
 1. Download Thonny from the [Thonny website](https://thonny.org/) and install it
 1. Connect your Raspberry Pi Pico using the USB cable
-	> :information_source: **Connecting a brand new Raspberry Pi Pico**  
+	> ℹ️ **Connecting a brand new Raspberry Pi Pico**  
 	If this is a brand new Raspberry Pi Pico, you will need to load MicroPython onto the microcontroller to allow Python code to execute. If you see the error `Couldn't find the device automatically.`, this means you will need to load MicroPython onto the Pi Pico microcontroller. Follow the steps below to install MicroPython onto the Pi Pico using Thonny.
 
 	a. With the Pi Pico plugged in, select _Run -> Configure Interpreter_ from within Thonny  
