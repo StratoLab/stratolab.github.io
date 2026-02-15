@@ -64,7 +64,8 @@ SDA	| A4
 - In order to see the serial monitor, where your data will be printing out, press ctrl + shift + m or enter the tools menu and select the serial monitor
 <br><br>
 
-#### Working Code 
+#### Working Code
+
 ```java
 //#include <SD.h> // load the SD library
 //#include <SPI.h> // load the SPI library

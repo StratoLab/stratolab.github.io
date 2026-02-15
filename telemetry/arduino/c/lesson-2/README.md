@@ -120,6 +120,7 @@ Using the same principles you learned above, wire two more LEDs, connecting them
 
 #### Working project
 - Copy and paste this code into your sketch and run it
+
 ```java
 void setup()
 {
