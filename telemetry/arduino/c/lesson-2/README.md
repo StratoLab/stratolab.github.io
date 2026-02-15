@@ -45,7 +45,8 @@ If you are unable to download the software due to access issues or hardware rest
 <br><br>
 
 #### Working project
-- Copy and paste this code into your sketch and run it
+Copy and paste this code into your sketch and run it
+
 ```java
 void setup() {
   // put your setup code here, to run once:
@@ -60,6 +61,7 @@ void loop() {
   delay(900);
 }
 ```
+
 <br>
 
 ## Troubleshooting
@@ -91,6 +93,7 @@ Ok, let's wire up the breadboard with the LED and resistor!
 
 #### Working project
 - Copy and paste this code into your sketch and run it
+
 ```java
 void setup()
 {
