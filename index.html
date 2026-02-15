@@ -47,8 +47,8 @@
   </div>
 
   <!-- Pinout FAB (Floating Action Button) -->
-  <button id="pinout-fab" class="hidden" aria-label="Show Pico pinout diagram">
-    <img src="assets/images/pinouts/raspberry-pi-pico-pinout-thumb.png" alt="Pinout" class="fab-image">
+  <button id="pinout-fab" class="hidden" aria-label="Show pinout diagram">
+    <img id="pinout-fab-image" src="" alt="Pinout" class="fab-image">
     <span class="fab-label">Pinout</span>
   </button>
 
@@ -57,12 +57,11 @@
     <div id="pinout-modal-backdrop"></div>
     <div id="pinout-modal-content">
       <div id="pinout-modal-header">
-        <h2 id="pinout-modal-title">Raspberry Pi Pico Pinout</h2>
+        <h2 id="pinout-modal-title"></h2>
         <button id="pinout-modal-close" aria-label="Close">&times;</button>
       </div>
       <div id="pinout-modal-body">
-        <img src="assets/images/pinouts/raspberry-pi-pico-pinout.png" 
-             alt="Raspberry Pi Pico pinout diagram showing all GPIO pins, power pins, and their functions">
+        <img id="pinout-modal-image" src="" alt="">
       </div>
     </div>
   </div>
@@ -73,6 +72,28 @@
     let activeTrack = 'all';
     let activeId = null;
     let allItems = []; // Flat list of all navigable items for lookup
+
+    // ===== Pinout Configuration =====
+    const pinoutConfig = {
+      pico: {
+        title: 'Raspberry Pi Pico Pinout',
+        thumbSrc: 'assets/images/pinouts/raspberry-pi-pico-pinout-thumb.png',
+        fullSrc: 'assets/images/pinouts/raspberry-pi-pico-pinout.png',
+        altText: 'Raspberry Pi Pico pinout diagram showing all GPIO pins, power pins, and their functions'
+      },
+      arduino: {
+        title: 'Arduino Uno Rev3 Pinout',
+        thumbSrc: 'assets/images/pinouts/arduino-uno-rev3-pinout-thumb.png',
+        fullSrc: 'assets/images/pinouts/arduino-uno-rev3-pinout.png',
+        altText: 'Arduino Uno Rev3 pinout diagram showing digital pins, analog pins, power pins, and their functions'
+      },
+      esp32: {
+        title: 'Heltec ESP32-S3 Tracker Pinout',
+        thumbSrc: 'assets/images/pinouts/esp32s3-pinout-thumb.png',
+        fullSrc: 'assets/images/pinouts/esp32s3-pinout.png',
+        altText: 'Heltec ESP32-S3 Tracker V1 pinout diagram showing GPIO pins, power pins, ADC/DAC, SPI, I2C, and LoRa connections'
+      }
+    };
 
     // ===== Initialization =====
     document.addEventListener('DOMContentLoaded', init);
@@ -569,9 +590,30 @@
     // ===== Pinout Modal =====
     function updatePinoutFabVisibility() {
       const fab = document.getElementById('pinout-fab');
-      const shouldShow = activeTrack === 'pico' || 
-                         (activeId && activeId.startsWith('pico-'));
-      fab.classList.toggle('hidden', !shouldShow);
+      
+      // Determine which platform to show pinout for
+      let platform = null;
+      if (activeTrack === 'pico' || (activeId && activeId.startsWith('pico-'))) {
+        platform = 'pico';
+      } else if (activeTrack === 'arduino' || (activeId && activeId.startsWith('arduino-'))) {
+        platform = 'arduino';
+      } else if (activeTrack === 'esp32' || (activeId && activeId.startsWith('esp32-'))) {
+        platform = 'esp32';
+      }
+      
+      if (platform && pinoutConfig[platform]) {
+        const cfg = pinoutConfig[platform];
+        // Update FAB thumbnail
+        document.getElementById('pinout-fab-image').src = cfg.thumbSrc;
+        // Update modal content
+        document.getElementById('pinout-modal-title').textContent = cfg.title;
+        const modalImg = document.getElementById('pinout-modal-image');
+        modalImg.src = cfg.fullSrc;
+        modalImg.alt = cfg.altText;
+        fab.classList.remove('hidden');
+      } else {
+        fab.classList.add('hidden');
+      }
     }
 
     function openPinoutModal() {
