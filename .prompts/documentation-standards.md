@@ -303,7 +303,7 @@ Safety is **critical** in StratoLab. Use consistent, visible formatting for safe
 > ⚠️ **WARNING: [Type of Hazard]**
 > [Clear explanation of the danger and how to avoid it]
 
-> :warning: **POLARITY WARNING**
+> ⚠️ **POLARITY WARNING**
 > The BMP-180 sensor can be damaged if power is connected backwards.
 > Always double-check VIN goes to 3.3V and GND goes to ground before
 > powering on.
