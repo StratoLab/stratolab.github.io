@@ -94,6 +94,8 @@ stratolab.github.io/
 ├── initial-research.md            # Research planning guide
 ├── .github/
 │   └── PULL_REQUEST_TEMPLATE.md  # PR checklist (testing, safety, quality)
+├── Makefile                       # Developer shortcuts (serve, validate, check)
+├── serve.sh                       # Local HTTP server script
 ├── CONTRIBUTING.md                # Human contributor guide
 └── AGENTS.md                      # (This file) AI agent guidelines
 ```

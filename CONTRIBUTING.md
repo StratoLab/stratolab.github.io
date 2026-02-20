@@ -30,17 +30,27 @@ If not installed, download from [python.org/downloads](https://www.python.org/do
 
 ### Starting the Local Server
 
-**Using the helper script (recommended for macOS/Linux):**
+**Using Make (recommended for macOS/Linux):**
+
+```bash
+make serve
+```
+
+Then open your browser to [http://localhost:8000](http://localhost:8000)
+
+**Make options:**
+- `make open` — Start server and open browser automatically
+- `make serve PORT=3000` — Use a different port
+
+**Using the helper script directly (alternative):**
+
+The `make` targets delegate to `./serve.sh`. You can also run it directly:
 
 ```bash
 ./serve.sh
 ```
 
-Then open your browser to [http://localhost:8000](http://localhost:8000)
-
-**Script options:**
-- `./serve.sh -o` — Start server and open browser automatically
-- `./serve.sh -p 3000` — Use a different port
+Script options: `./serve.sh -o` (open browser), `./serve.sh -p 3000` (custom port)
 
 **Manual method (Windows or if script doesn't work):**
 
@@ -69,7 +79,7 @@ Press `Ctrl+C` in the terminal where the server is running.
 **"Address already in use" error:**
 
 Another program is using port 8000. Either stop that program, or use a
-different port: `./serve.sh -p 3001`
+different port: `make serve PORT=3001` or `./serve.sh -p 3001`
 
 **Changes not appearing:**
 
@@ -84,6 +94,30 @@ Install Python 3 from [python.org/downloads](https://www.python.org/downloads/)
 **"Permission denied" when running serve.sh:**
 
 Make the script executable: `chmod +x serve.sh`
+
+## Makefile Reference
+
+Run `make` with no arguments to see all available commands:
+
+```bash
+make
+```
+
+| Command | Description |
+|---|---|
+| `make serve` | Start the local server at http://localhost:8000 |
+| `make open` | Start the server and open a browser tab automatically |
+| `make validate` | Check that `site-config.json` is valid JSON |
+| `make check` | Run all available validations |
+
+You can override the default port for any server command:
+
+```bash
+make serve PORT=3000
+make open PORT=3000
+```
+
+**Note for Windows users:** `make` is not installed by default on Windows. Use the helper script or manual Python method below instead.
 
 ## What Goes Here
 
