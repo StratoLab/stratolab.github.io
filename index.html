@@ -16,9 +16,38 @@
       <img src="assets/images/stratolab.svg" alt="StratoLab logo" id="logo">
       <span id="logo-text">StratoLab</span>
     </a>
-    <div id="search-placeholder">
-      <!-- Phase 2: Search box goes here -->
+    <div id="search-container">
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search…"
+        autocomplete="off"
+        aria-label="Search documentation"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-controls="search-results"
+        role="combobox"
+      >
+      <div id="search-results" role="listbox" aria-label="Search results" class="hidden"></div>
     </div>
+    <a id="github-link"
+       href="https://github.com/StratoLab"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="StratoLab on GitHub"
+       title="StratoLab on GitHub">
+      <!-- Inline GitHub SVG mark, 20×20 -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+    </a>
   </header>
 
   <!-- Sidebar -->
@@ -72,6 +101,9 @@
     let activeTrack = 'all';
     let activeId = null;
     let allItems = []; // Flat list of all navigable items for lookup
+    let searchIndex = [];
+    let activeSearchIndex = -1;
+    const contentStore = new Map(); // id → stripped plain text
 
     // ===== Pinout Configuration =====
     const pinoutConfig = {
@@ -107,16 +139,21 @@
         }
         config = await response.json();
         
-        // 2. Build flat item lookup
+        // 2. Build flat item lookup and search index
         buildItemLookup();
-        
+        buildSearchIndex();
+
         // 3. Render sidebar
         renderSidebar();
         
         // 4. Setup event listeners
         setupEventListeners();
-        
-        // 5. Handle initial state
+        initSearch();
+
+        // 5. Prefetch content for full-text search during idle time
+        scheduleContentPrefetch();
+
+        // 6. Handle initial state
         if (window.location.hash) {
           const id = window.location.hash.slice(1);
           const item = findItemById(id);
@@ -156,6 +193,219 @@
         track.sections.forEach(section => {
           allItems.push(section);
         });
+      });
+    }
+
+    // ===== Build search index =====
+    function buildSearchIndex() {
+      searchIndex = [];
+      // Shared items
+      for (const item of config.shared || []) {
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.path && !child.stub) {
+              searchIndex.push({ id: child.id, title: child.title, path: child.path, trackLabel: 'General' });
+            }
+          }
+        } else if (item.path && !item.stub) {
+          searchIndex.push({ id: item.id, title: item.title, path: item.path, trackLabel: 'General' });
+        }
+      }
+      // Track items
+      for (const track of config.tracks || []) {
+        for (const section of track.sections || []) {
+          if (section.path && !section.stub) {
+            searchIndex.push({ id: section.id, title: section.title, path: section.path, trackLabel: track.title });
+          }
+        }
+      }
+    }
+
+    // ===== Full-Text Content Prefetch =====
+    function scheduleContentPrefetch() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => prefetchContent(), { timeout: 5000 });
+      } else {
+        setTimeout(() => prefetchContent(), 2000);
+      }
+    }
+
+    async function prefetchContent() {
+      await Promise.all(searchIndex.map(async (item) => {
+        if (contentStore.has(item.id)) return;
+        try {
+          const res = await fetch(item.path);
+          if (!res.ok) return;
+          contentStore.set(item.id, stripMarkdown(await res.text()));
+        } catch (e) { /* silent */ }
+      }));
+    }
+
+    function stripMarkdown(md) {
+      return md
+        // Remove code fences (keep inner text for keyword matching)
+        .replace(/^```[^\n]*\n([\s\S]*?)^```/gm, '$1')
+        // Remove inline code backticks
+        .replace(/`([^`]+)`/g, '$1')
+        // Remove images
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        // Replace links with their label text
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+        // Remove heading markers
+        .replace(/^#{1,6}\s+/gm, '')
+        // Remove bold/italic markers
+        .replace(/\*{1,3}([^*\n]+)\*{1,3}/g, '$1')
+        .replace(/_{1,3}([^_\n]+)_{1,3}/g, '$1')
+        // Remove HTML tags
+        .replace(/<[^>]+>/g, ' ')
+        // Remove horizontal rules
+        .replace(/^[-*_]{3,}\s*$/gm, '')
+        // Collapse whitespace
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function extractExcerpt(text, query) {
+      const lowerText = text.toLowerCase();
+      const q = query.trim().toLowerCase();
+      const matchIdx = lowerText.indexOf(q);
+      if (matchIdx === -1) return '';
+      const ctxStart = Math.max(0, matchIdx - 60);
+      const ctxEnd = Math.min(text.length, matchIdx + q.length + 60);
+      const pre = escapeHtml(text.slice(ctxStart, matchIdx));
+      const match = escapeHtml(text.slice(matchIdx, matchIdx + q.length));
+      const post = escapeHtml(text.slice(matchIdx + q.length, ctxEnd));
+      return (ctxStart > 0 ? '…' : '') + pre + '<mark>' + match + '</mark>' + post + (ctxEnd < text.length ? '…' : '');
+    }
+
+    // ===== Search =====
+    function searchItems(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+
+      // Title search
+      const titleResults = searchIndex
+        .map(item => {
+          const t = item.title.toLowerCase();
+          let score = 0;
+          if (t === q) score = 3;
+          else if (t.startsWith(q)) score = 2;
+          else if (t.includes(q)) score = 1;
+          return { ...item, score, excerpt: '' };
+        })
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      // Enrich title results with excerpts if content is available
+      titleResults.forEach(r => {
+        const text = contentStore.get(r.id);
+        if (text) r.excerpt = extractExcerpt(text, q);
+      });
+
+      // Content-only search for pages not already in title results
+      const titleIds = new Set(titleResults.map(r => r.id));
+      const contentResults = [];
+      if (contentStore.size > 0) {
+        for (const item of searchIndex) {
+          if (titleIds.has(item.id)) continue;
+          const text = contentStore.get(item.id);
+          if (text && text.toLowerCase().includes(q)) {
+            contentResults.push({ ...item, score: 0.5, excerpt: extractExcerpt(text, q) });
+          }
+        }
+      }
+
+      return [...titleResults, ...contentResults].slice(0, 8);
+    }
+
+    function renderSearchResults(results) {
+      const container = document.getElementById('search-results');
+      const input = document.getElementById('search-input');
+      if (!results.length) {
+        container.classList.add('hidden');
+        input.setAttribute('aria-expanded', 'false');
+        return;
+      }
+      container.innerHTML = results.map((item, i) =>
+        `<div class="search-result" role="option" data-id="${item.id}" data-index="${i}" tabindex="-1">
+          <div class="search-result-top">
+            <span class="search-result-title">${item.title}</span>
+            <span class="search-result-track">${item.trackLabel}</span>
+          </div>
+          ${item.excerpt ? `<div class="search-result-excerpt">${item.excerpt}</div>` : ''}
+        </div>`
+      ).join('');
+      container.classList.remove('hidden');
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    function selectSearchResult(id) {
+      closeSearch();
+      const item = findItemById(id);
+      if (item && item.path) {
+        loadContent(item.path, item.id, false);
+      }
+    }
+
+    function closeSearch() {
+      const container = document.getElementById('search-results');
+      const input = document.getElementById('search-input');
+      container.classList.add('hidden');
+      input.setAttribute('aria-expanded', 'false');
+      input.value = '';
+      activeSearchIndex = -1;
+    }
+
+    function initSearch() {
+      const input = document.getElementById('search-input');
+      const results = document.getElementById('search-results');
+
+      input.addEventListener('input', () => {
+        activeSearchIndex = -1;
+        renderSearchResults(searchItems(input.value));
+      });
+
+      input.addEventListener('keydown', (e) => {
+        const items = results.querySelectorAll('.search-result');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeSearchIndex = Math.min(activeSearchIndex + 1, items.length - 1);
+          updateSearchHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeSearchIndex = Math.max(activeSearchIndex - 1, -1);
+          updateSearchHighlight(items);
+        } else if (e.key === 'Enter') {
+          if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
+            selectSearchResult(items[activeSearchIndex].dataset.id);
+          }
+        } else if (e.key === 'Escape') {
+          closeSearch();
+        }
+      });
+
+      results.addEventListener('mousedown', (e) => {
+        // Prevent input blur before click fires
+        e.preventDefault();
+      });
+
+      results.addEventListener('click', (e) => {
+        const result = e.target.closest('.search-result');
+        if (result) selectSearchResult(result.dataset.id);
+      });
+
+      input.addEventListener('blur', () => {
+        setTimeout(() => closeSearch(), 150);
+      });
+    }
+
+    function updateSearchHighlight(items) {
+      items.forEach((el, i) => {
+        el.classList.toggle('search-result-active', i === activeSearchIndex);
       });
     }
 

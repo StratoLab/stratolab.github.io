@@ -5,5 +5,8 @@
 *.bkp
 *.dtmp
 
+# Ignore Claude Code settings
+.claude/
+
 # Ignore other files
 .DS_Store
