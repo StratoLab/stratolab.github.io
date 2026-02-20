@@ -103,6 +103,7 @@
     let allItems = []; // Flat list of all navigable items for lookup
     let searchIndex = [];
     let activeSearchIndex = -1;
+    const contentStore = new Map(); // id → stripped plain text
 
     // ===== Pinout Configuration =====
     const pinoutConfig = {
@@ -148,8 +149,11 @@
         // 4. Setup event listeners
         setupEventListeners();
         initSearch();
-        
-        // 5. Handle initial state
+
+        // 5. Prefetch content for full-text search during idle time
+        scheduleContentPrefetch();
+
+        // 6. Handle initial state
         if (window.location.hash) {
           const id = window.location.hash.slice(1);
           const item = findItemById(id);
@@ -217,22 +221,105 @@
       }
     }
 
+    // ===== Full-Text Content Prefetch =====
+    function scheduleContentPrefetch() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => prefetchContent(), { timeout: 5000 });
+      } else {
+        setTimeout(() => prefetchContent(), 2000);
+      }
+    }
+
+    async function prefetchContent() {
+      await Promise.all(searchIndex.map(async (item) => {
+        if (contentStore.has(item.id)) return;
+        try {
+          const res = await fetch(item.path);
+          if (!res.ok) return;
+          contentStore.set(item.id, stripMarkdown(await res.text()));
+        } catch (e) { /* silent */ }
+      }));
+    }
+
+    function stripMarkdown(md) {
+      return md
+        // Remove code fences (keep inner text for keyword matching)
+        .replace(/^```[^\n]*\n([\s\S]*?)^```/gm, '$1')
+        // Remove inline code backticks
+        .replace(/`([^`]+)`/g, '$1')
+        // Remove images
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        // Replace links with their label text
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+        // Remove heading markers
+        .replace(/^#{1,6}\s+/gm, '')
+        // Remove bold/italic markers
+        .replace(/\*{1,3}([^*\n]+)\*{1,3}/g, '$1')
+        .replace(/_{1,3}([^_\n]+)_{1,3}/g, '$1')
+        // Remove HTML tags
+        .replace(/<[^>]+>/g, ' ')
+        // Remove horizontal rules
+        .replace(/^[-*_]{3,}\s*$/gm, '')
+        // Collapse whitespace
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function extractExcerpt(text, query) {
+      const lowerText = text.toLowerCase();
+      const q = query.trim().toLowerCase();
+      const matchIdx = lowerText.indexOf(q);
+      if (matchIdx === -1) return '';
+      const ctxStart = Math.max(0, matchIdx - 60);
+      const ctxEnd = Math.min(text.length, matchIdx + q.length + 60);
+      const pre = escapeHtml(text.slice(ctxStart, matchIdx));
+      const match = escapeHtml(text.slice(matchIdx, matchIdx + q.length));
+      const post = escapeHtml(text.slice(matchIdx + q.length, ctxEnd));
+      return (ctxStart > 0 ? '…' : '') + pre + '<mark>' + match + '</mark>' + post + (ctxEnd < text.length ? '…' : '');
+    }
+
     // ===== Search =====
     function searchItems(query) {
       const q = query.trim().toLowerCase();
       if (!q) return [];
-      return searchIndex
+
+      // Title search
+      const titleResults = searchIndex
         .map(item => {
           const t = item.title.toLowerCase();
           let score = 0;
           if (t === q) score = 3;
           else if (t.startsWith(q)) score = 2;
           else if (t.includes(q)) score = 1;
-          return { ...item, score };
+          return { ...item, score, excerpt: '' };
         })
         .filter(item => item.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 8);
+        .sort((a, b) => b.score - a.score);
+
+      // Enrich title results with excerpts if content is available
+      titleResults.forEach(r => {
+        const text = contentStore.get(r.id);
+        if (text) r.excerpt = extractExcerpt(text, q);
+      });
+
+      // Content-only search for pages not already in title results
+      const titleIds = new Set(titleResults.map(r => r.id));
+      const contentResults = [];
+      if (contentStore.size > 0) {
+        for (const item of searchIndex) {
+          if (titleIds.has(item.id)) continue;
+          const text = contentStore.get(item.id);
+          if (text && text.toLowerCase().includes(q)) {
+            contentResults.push({ ...item, score: 0.5, excerpt: extractExcerpt(text, q) });
+          }
+        }
+      }
+
+      return [...titleResults, ...contentResults].slice(0, 8);
     }
 
     function renderSearchResults(results) {
@@ -245,8 +332,11 @@
       }
       container.innerHTML = results.map((item, i) =>
         `<div class="search-result" role="option" data-id="${item.id}" data-index="${i}" tabindex="-1">
-          <span class="search-result-title">${item.title}</span>
-          <span class="search-result-track">${item.trackLabel}</span>
+          <div class="search-result-top">
+            <span class="search-result-title">${item.title}</span>
+            <span class="search-result-track">${item.trackLabel}</span>
+          </div>
+          ${item.excerpt ? `<div class="search-result-excerpt">${item.excerpt}</div>` : ''}
         </div>`
       ).join('');
       container.classList.remove('hidden');
